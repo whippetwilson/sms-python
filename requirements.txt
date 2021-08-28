@@ -1,0 +1,8 @@
+#sudo apt install libgammu-dev
+asgiref==3.4.1
+Django==3.2.6
+python-gammu==3.2.3
+pytz==2021.1
+sqlparse==0.4.1
+pyserial~=3.5
+# sudo dmesg | grep tty

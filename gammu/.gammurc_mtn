@@ -1,0 +1,4 @@
+[gammu]
+device = /dev/ttyUSB5
+connection = at
+
