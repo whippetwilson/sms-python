@@ -25,18 +25,15 @@ def send(request=None):
                 network = "mtn"
             elif recipient.startswith("25675") or recipient.startswith("25670"):
                 network = "airtel"
-
+        config = f"{settings.BASE_DIR / 'gammu/.gammurc'}_{network}"
         __message = data.get("message")
         message_id = data.get("id")
-        state_machine = gammu.StateMachine()
-        config = f"{settings.BASE_DIR / 'gammu/.gammurc'}_{network}"
-        state_machine.ReadConfig(Filename=config)
-        state_machine.Init()
         _message = {
             "Text": __message,
             "SMSC": {"Location": 1},
             "Number": int(recipient),
-            "id": message_id
+            "id": message_id,
+            "config_path": config
         }
         to_send.append(_message)
     # Actually send the message
@@ -46,12 +43,16 @@ def send(request=None):
     outbound_messages = []
     for message in to_send:
         try:
+            state_machine = gammu.StateMachine()
+            config = message.get("config_path")
+            state_machine.ReadConfig(Filename=config)
+            state_machine.Init()
             reference = state_machine.SendSMS(message)
             sent = sent+1 if reference else sent+0
             sent_status = True if reference else False
             outbound_messages.append(
                 get_outbound_message(reference, timezone.now(), message.get("id"),
-                                     message.get("Number"), timezone.now(), sent_status, "")
+                                     message.get("Number"), timezone.now(), sent_status, "", message.get('Text'))
             )
         except Exception as e:
             failed = failed + 1
@@ -59,13 +60,15 @@ def send(request=None):
             outbound_messages.append(
                 get_outbound_message(None, timezone.now(), message.get("id"),
                                      message.get("Number"), timezone.now(), sent_status,
-                                     json.loads(json.dumps(str(e))))
+                                     json.loads(json.dumps(str(e))),
+                                     message.get("Text"))
             )
     return JsonResponse({
         "sent": sent,
-        "id": uuid.UUID(),
+        "id": uuid.uuid4(),
         "provider": None,
         "sender": "",
         "total": total,
-        "failed": failed
+        "failed": failed,
+        "outboundMessages": outbound_messages
     })

@@ -3,12 +3,12 @@ from django.db import models
 
 # Create your models here.
 
-def get_outbound_message(message_id, time, uuid, recipient, dispatch_date, sent_status, error_message):
+def get_outbound_message(message_id, time, uuid, recipient, dispatch_date, sent_status, error_message, message):
     return {
         "messageId": message_id,
         "type": "OUTBOUND",
         "date": time,
-        "text": "req.message",
+        "text": message,
         "uuid": uuid,
         "encoding": "ENC7BIT",
         "dstPort": -1,

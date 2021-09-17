@@ -1,4 +1,4 @@
 [gammu]
-device = /dev/ttyUSB2
+device = /dev/ttyUSB0
 connection = at
 
