@@ -19,7 +19,7 @@ def send(request=None):
     to_send = []
     for data in _data:
         network = "others"
-        recipient = str(data.get("recipient"))
+        recipient = str(data.get("recipient")).replace("+", "")
         if recipient.startswith("256"):
             if recipient.startswith("25678") or recipient.startswith("25677"):
                 network = "mtn"
@@ -28,6 +28,8 @@ def send(request=None):
         config = f"{settings.BASE_DIR / 'gammu/.gammurc'}_{network}"
         __message = data.get("message")
         message_id = data.get("id")
+        if message_id is None:
+            message_id = data.get("ID")
         _message = {
             "Text": __message,
             "SMSC": {"Location": 1},
