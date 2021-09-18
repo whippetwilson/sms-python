@@ -20,5 +20,6 @@ from plug.views import send
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/send/', send)
+    path('api/send/', send),
+    path('sms/send/', send)
 ]
